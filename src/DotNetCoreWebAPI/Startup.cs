@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using DotNetCoreWebAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DotNetCoreWebAPI
 {
@@ -29,6 +31,10 @@ namespace DotNetCoreWebAPI
         {
             // Add framework services.
             services.AddMvc();
+            services.AddSingleton<ICustomerOrderHistoryRepository, CustomerOrderHistoryRepository>();
+            services.AddDbContext<CustomerOrderHistoryContext>(options =>
+            { options.UseSqlServer(Configuration.GetConnectionString("NorthWindDB")); }
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,7 +43,7 @@ namespace DotNetCoreWebAPI
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.UseMvc();
+            app.UseMvcWithDefaultRoute();
         }
     }
 }
